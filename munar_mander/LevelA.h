@@ -3,6 +3,7 @@
 class LevelA : public Scene {
 public:
     int ENEMY_COUNT = 1;
+    GLuint A_font_texture_id;
     
     ~LevelA();
     

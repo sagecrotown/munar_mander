@@ -36,6 +36,7 @@ class Scene {
 public:
     // ————— ATTRIBUTES ————— //
     int m_number_of_enemies = 1;
+    int fuel_count = 0;
     
     GameState m_game_state;
     
@@ -47,4 +48,6 @@ public:
     // ————— GETTERS ————— //
     GameState const get_state() const { return m_game_state;             }
     int const get_number_of_enemies() const { return m_number_of_enemies; }
+    
+    void set_scene_id(int id) { m_game_state.next_scene_id = id; }
 };
