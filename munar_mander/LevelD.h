@@ -1,11 +1,11 @@
 #include "Scene.h"
 
-class LevelC : public Scene {
+class LevelD : public Scene {
 public:
     int ENEMY_COUNT = 1;
-    GLuint C_font_texture_id;
+    GLuint D_font_texture_id;
     
-    ~LevelC();
+    ~LevelD();
     
     void initialise(ShaderProgram *program) override;
     void update(float delta_time) override;

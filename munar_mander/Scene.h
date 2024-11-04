@@ -41,7 +41,7 @@ public:
     GameState m_game_state;
     
     // ————— METHODS ————— //
-    virtual void initialise() = 0;
+    virtual void initialise(ShaderProgram *program) = 0;
     virtual void update(float delta_time) = 0;
     virtual void render(ShaderProgram *program) = 0;
     

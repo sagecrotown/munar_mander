@@ -92,3 +92,41 @@ void Utility::draw_text(ShaderProgram *program, GLuint font_texture_id, std::str
     glDisableVertexAttribArray(program->get_position_attribute());
     glDisableVertexAttribArray(program->get_tex_coordinate_attribute());
 }
+
+// takes file, reads into array
+void Utility::readCSV(const char* filepath, unsigned int* data, int datasize) {
+    std::ifstream file(filepath);
+    int i = 0;
+
+    if (file.is_open()) {
+        std::string line;
+        while (std::getline(file, line)) {
+            std::stringstream lineStream(line);
+            std::string cell;
+
+            while (std::getline(lineStream, cell, ',') && (i < datasize)) {
+                data[i] = std::stoi(cell);
+                i++;
+            }
+        }
+        file.close();
+    } else {
+        std::cerr << "Unable to open file: " << filepath << std::endl;
+    }
+}
+
+//    int main() {
+//        auto levelData = readCSV("level_data.csv");
+//
+//        // Print the level data to verify
+//        for (const auto& row : levelData) {
+//            for (unsigned int cell : row) {
+//                std::cout << cell << " ";
+//            }
+//            std::cout << std::endl;
+//        }
+//
+//        return 0;
+//    }
+//    
+//}

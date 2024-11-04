@@ -1,9 +1,7 @@
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.0166666f
-#define LEVEL1_WIDTH 14
-#define LEVEL1_HEIGHT 8
-#define LEVEL1_LEFT_EDGE 5.0f
+//#define LEVEL1_LEFT_EDGE 5.0f
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -25,6 +23,7 @@
 #include "LevelA.h"
 #include "LevelB.h"
 #include "LevelC.h"
+#include "LevelD.h"
 #include "Effects.h"
 
 // ––––– CONSTANTS ––––– //
@@ -41,6 +40,9 @@ constexpr int VIEWPORT_X = 0,
           VIEWPORT_WIDTH  = WINDOW_WIDTH,
           VIEWPORT_HEIGHT = WINDOW_HEIGHT;
 
+float left_edge;
+float bottom_edge;
+
 constexpr char V_SHADER_PATH[] = "shaders/vertex_textured.glsl",
            F_SHADER_PATH[] = "shaders/fragment_textured.glsl";
 
@@ -53,9 +55,10 @@ Scene  *g_current_scene;
 LevelA *g_levelA;
 LevelB *g_levelB;
 LevelC *g_levelC;
+LevelD *g_levelD;
 
 Effects *g_effects;
-Scene   *g_levels[3];
+Scene   *g_levels[4];
 
 SDL_Window* g_display_window;
 
@@ -83,7 +86,7 @@ void shutdown();
 void switch_to_scene(Scene *scene)
 {
     g_current_scene = scene;
-    g_current_scene->initialise(); // DON'T FORGET THIS STEP!
+    g_current_scene->initialise(&g_shader_program); // DON'T FORGET THIS STEP!
 }
 
 void initialise()
@@ -107,6 +110,8 @@ void initialise()
     
     g_view_matrix = glm::mat4(1.0f);
     g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
+    left_edge = 10.0f;
+    bottom_edge = -140.0f;
     
     g_shader_program.set_projection_matrix(g_projection_matrix);
     g_shader_program.set_view_matrix(g_view_matrix);
@@ -122,10 +127,12 @@ void initialise()
     g_levelA = new LevelA();
     g_levelB = new LevelB();
     g_levelC = new LevelC();
+    g_levelD = new LevelD();
     
     g_levels[0] = g_levelA;
     g_levels[1] = g_levelB;
     g_levels[2] = g_levelC;
+    g_levels[3] = g_levelD;
     
     // Start at level A
     switch_to_scene(g_levels[0]);
@@ -171,6 +178,12 @@ void process_input()
                         
                         if (g_current_scene == g_levelC) {
                             g_current_scene->fuel_count++;
+                        }
+                        break;
+                        
+                    case SDLK_RETURN:
+                        if (g_current_scene == g_levelC) {
+                            g_current_scene->set_scene_id(3);
                         }
                         break;
                         
@@ -223,11 +236,36 @@ void update()
     // Prevent the camera from showing anything outside of the "edge" of the level
     g_view_matrix = glm::mat4(1.0f);
     
-    if (g_current_scene->get_state().player->get_position().x > LEVEL1_LEFT_EDGE) {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->get_state().player->get_position().x, 3.75, 0));
-    } else {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
+    // camera follows player left/right and up/down
+    if (g_current_scene == g_levelD) {
+//        std::cout << left_edge << std::endl;
+//        if (g_current_scene->get_state().player->get_position().x > left_edge) {
+//            if (g_current_scene->get_state().player->get_position().y > bottom_edge) {
+//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->get_state().player->get_position().x, -g_current_scene->get_state().player->get_position().y + bottom_edge, 0));
+//                }
+//            else { // camera hits bottom
+//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->get_state().player->get_position().x, 0, 0));
+////                  }
+//        } else { // camera hits left edge
+//            if (g_current_scene->get_state().player->get_position().y > bottom_edge) {
+//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-left_edge, -g_current_scene->get_state().player->get_position().y + 4, 0));
+//            }
+//            else { // hits left AND bottom
+//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-left_edge, -bottom_edge, 0));
+//            }
+//        }
+            
+        float view_left = std::max(g_current_scene->get_state().player->get_position().x, left_edge);
+        float view_bottom = std::max(g_current_scene->get_state().player->get_position().y, bottom_edge);
+        
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-view_left, -view_bottom, 0));
+            
     }
+    else {
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
+//        std::cout << -g_current_scene->get_state().player->get_position().y << std::endl;
+    }
+
     
     if (g_current_scene == g_levelA && g_current_scene->get_state().player->get_position().y < -10.0f) switch_to_scene(g_levelB);
     
@@ -255,6 +293,7 @@ void shutdown()
     delete g_levelA;
     delete g_levelB;
     delete g_levelC;
+    delete g_levelD;
     delete g_effects;
 }
 
@@ -272,6 +311,10 @@ int main(int argc, char* argv[])
             int curr_fuel = g_current_scene->fuel_count;
             switch_to_scene(g_levels[g_current_scene->get_state().next_scene_id]);
             g_current_scene->fuel_count = curr_fuel;
+            if (g_current_scene == g_levelD) {
+                g_projection_matrix = glm::ortho(-30.0f, 30.0f, -22.5f, 22.5f, -1.0f, 1.0f);
+                g_shader_program.set_projection_matrix(g_projection_matrix);
+            }
         }
         
         render();

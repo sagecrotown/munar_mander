@@ -22,7 +22,7 @@ LevelC::~LevelC()
     Mix_FreeMusic(m_game_state.bgm);
 }
 
-void LevelC::initialise()
+void LevelC::initialise(ShaderProgram *program)
 {
     m_game_state.next_scene_id = -1;
     
@@ -59,6 +59,7 @@ void LevelC::initialise()
     );
         
     m_game_state.player->set_position(glm::vec3(5.0f, -5.0f, 0.0f));
+    m_game_state.player->deactivate();
     
     /**
     Enemies' stuff */

@@ -1,44 +1,18 @@
-#include "LevelA.h"
+#include "LevelD.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 10
-#define LEVEL_HEIGHT 8
+#define LEVEL_WIDTH 200
+#define LEVEL_HEIGHT 140
 
 constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-          FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png";
+          FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png",
+            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map_big.csv";
 
-//unsigned int LEVELA_DATA[] = {
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 33, 15, 22, 13, 25, 23, 15, 0 , 0 , 30, 25, 0 , 0 , 23, 11, 28, 29, 38, 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-//};
+unsigned int LEVELD_DATA[LEVEL_WIDTH * LEVEL_HEIGHT];
 
-unsigned int LEVELA_DATA[] = {
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 4 , 4 , 4 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0
-    
-};
-
-LevelA::~LevelA()
+LevelD::~LevelD()
 {
     delete [] m_game_state.enemies;
     delete    m_game_state.player;
@@ -47,14 +21,23 @@ LevelA::~LevelA()
     Mix_FreeMusic(m_game_state.bgm);
 }
 
-void LevelA::initialise(ShaderProgram *program)
-{
+void LevelD::initialise(ShaderProgram *program) {
+    
     m_game_state.next_scene_id = -1;
     
+    Utility::readCSV(CSV_FILEPATH, LEVELD_DATA, LEVEL_WIDTH * LEVEL_HEIGHT);
     GLuint map_texture_id = Utility::load_texture(MAP_FILEPATH);
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELA_DATA, map_texture_id, 1.0f, 7, 4);
     
-    A_font_texture_id = Utility::load_texture(FONT_FILEPATH);
+//    for (int i = 0; i < LEVEL_HEIGHT; i++) {
+//        for (int j = 0; j < LEVEL_WIDTH; j++) {
+//            std::cout << LEVELD_DATA[i*LEVEL_WIDTH + j] << " ";
+//        }
+//        std::cout << std::endl;
+//    }
+    
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELD_DATA, map_texture_id, 1.0f, 7, 3);
+    
+    D_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
     // Existing
     int player_walking_animation[4][4] = {
@@ -88,6 +71,7 @@ void LevelA::initialise(ShaderProgram *program)
 
     // Jumping
     m_game_state.player->set_jumping_power(3.0f);
+    m_game_state.player->set_scale(glm::vec3(5.0f, 5.0f, 1.0f));
     
     /**
     Enemies' stuff */
@@ -113,19 +97,24 @@ void LevelA::initialise(ShaderProgram *program)
     Mix_VolumeMusic(0.0f);
     
     m_game_state.jump_sfx = Mix_LoadWAV("assets/bounce.wav");
+    
+    // ShaderProgram stuff
+    glm::mat4 new_projection_matrix = glm::ortho(-10.0f, 10.0f, -7.5f, 7.5f, -1.0f, 1.0f);
+    
+    program->set_projection_matrix(new_projection_matrix);
 }
 
-void LevelA::update(float delta_time)
+void LevelD::update(float delta_time)
 {
     m_game_state.player->update(delta_time, m_game_state.player, m_game_state.enemies, ENEMY_COUNT, m_game_state.map);
     
-    if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
+//    if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
 }
 
-void LevelA::render(ShaderProgram *program)
+void LevelD::render(ShaderProgram *program)
 {
     m_game_state.map->render(program);
-    Utility::draw_text(program, A_font_texture_id, "WELCOME TO MARS!", 0.5f, 0.01f, glm::vec3(1.0f, -1.0f , 0.0f));
+//    Utility::draw_text(program, D_font_texture_id, "WELCOME TO MARS!", 0.5f, 0.01f, glm::vec3(1.0f, -1.0f , 0.0f));
     m_game_state.player->render(program);
     
 }
