@@ -32,7 +32,8 @@ private:
     glm::mat4 m_model_matrix;
 
     float     m_speed,
-              m_jumping_power;
+              m_jumping_power,
+              m_angle = 0;
     
     bool m_is_jumping;
 
@@ -138,6 +139,8 @@ public:
     void const set_jumping_power(float new_jumping_power) { m_jumping_power = new_jumping_power;}
     void const set_width(float new_width) {m_width = new_width; }
     void const set_height(float new_height) {m_height = new_height; }
+    
+    void const change_angle(float difference) {m_angle = m_angle + difference; }
 
     // Setter for m_walking
     void set_walking(int walking[4][4])

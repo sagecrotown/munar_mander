@@ -1,7 +1,6 @@
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.0166666f
-//#define LEVEL1_LEFT_EDGE 5.0f
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -57,7 +56,7 @@ LevelB *g_levelB;
 LevelC *g_levelC;
 LevelD *g_levelD;
 
-Effects *g_effects;
+//Effects *g_effects;
 Scene   *g_levels[4];
 
 SDL_Window* g_display_window;
@@ -110,8 +109,8 @@ void initialise()
     
     g_view_matrix = glm::mat4(1.0f);
     g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
-    left_edge = 10.0f;
-    bottom_edge = -140.0f;
+    left_edge = 30.0f;
+    bottom_edge = -115.0f;
     
     g_shader_program.set_projection_matrix(g_projection_matrix);
     g_shader_program.set_view_matrix(g_view_matrix);
@@ -137,8 +136,8 @@ void initialise()
     // Start at level A
     switch_to_scene(g_levels[0]);
     
-    g_effects = new Effects(g_projection_matrix, g_view_matrix);
-    g_effects->start(SHRINK, 2.0f);
+//    g_effects = new Effects(g_projection_matrix, g_view_matrix);
+//    g_effects->start(SHRINK, 2.0f);
 }
 
 void process_input()
@@ -163,14 +162,6 @@ void process_input()
                         g_app_status = TERMINATED;
                         break;
                         
-                    case SDLK_SPACE:
-                        // Jump
-                        if (g_current_scene->get_state().player->get_collided_bottom()) {
-                            g_current_scene->get_state().player->jump();
-                            Mix_PlayChannel(-1,  g_current_scene->get_state().jump_sfx, 0);
-                        }
-                        break;
-                        
                     case SDLK_f:
                         if (g_current_scene == g_levelB) {
                             g_current_scene->set_scene_id(2);
@@ -192,14 +183,26 @@ void process_input()
                 }
                 
             default:
+                g_current_scene->get_state().player->set_acceleration(glm::vec3(0.0f, -3.73f, 0.0f));
                 break;
         }
     }
     
     const Uint8 *key_state = SDL_GetKeyboardState(NULL);
 
-    if (key_state[SDL_SCANCODE_LEFT])        g_current_scene->get_state().player->move_left();
-        else if (key_state[SDL_SCANCODE_RIGHT])  g_current_scene->get_state().player->move_right();
+    if (key_state[SDL_SCANCODE_LEFT]) {
+        g_current_scene->get_state().player->change_angle(0.01f);
+    }
+    else if (key_state[SDL_SCANCODE_RIGHT])  {
+        g_current_scene->get_state().player->change_angle(-0.01f);
+    }
+    
+    if (key_state[SDL_SCANCODE_SPACE]) {
+        g_current_scene->get_state().player->jump();
+    }
+    else {
+        g_current_scene->get_state().player->set_acceleration(glm::vec3(0.0f, -3.73f, 0.0f));
+    }
          
     if (glm::length( g_current_scene->get_state().player->get_movement()) > 1.0f)
         g_current_scene->get_state().player->normalise_movement();
@@ -222,9 +225,9 @@ void update()
     
     while (delta_time >= FIXED_TIMESTEP) {
         g_current_scene->update(FIXED_TIMESTEP);
-        g_effects->update(FIXED_TIMESTEP);
+//        g_effects->update(FIXED_TIMESTEP);
         
-        if (g_is_colliding_bottom == false && g_current_scene->get_state().player->get_collided_bottom()) g_effects->start(SHAKE, 1.0f);
+//        if (g_is_colliding_bottom == false && g_current_scene->get_state().player->get_collided_bottom()) g_effects->start(SHAKE, 1.0f);
         
         g_is_colliding_bottom = g_current_scene->get_state().player->get_collided_bottom();
         
@@ -238,38 +241,18 @@ void update()
     
     // camera follows player left/right and up/down
     if (g_current_scene == g_levelD) {
-//        std::cout << left_edge << std::endl;
-//        if (g_current_scene->get_state().player->get_position().x > left_edge) {
-//            if (g_current_scene->get_state().player->get_position().y > bottom_edge) {
-//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->get_state().player->get_position().x, -g_current_scene->get_state().player->get_position().y + bottom_edge, 0));
-//                }
-//            else { // camera hits bottom
-//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->get_state().player->get_position().x, 0, 0));
-////                  }
-//        } else { // camera hits left edge
-//            if (g_current_scene->get_state().player->get_position().y > bottom_edge) {
-//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-left_edge, -g_current_scene->get_state().player->get_position().y + 4, 0));
-//            }
-//            else { // hits left AND bottom
-//                g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-left_edge, -bottom_edge, 0));
-//            }
-//        }
-            
         float view_left = std::max(g_current_scene->get_state().player->get_position().x, left_edge);
-        float view_bottom = std::max(g_current_scene->get_state().player->get_position().y, bottom_edge);
+        float view_bottom = std::max(g_current_scene->get_state().player->get_position().y - 18, bottom_edge);
         
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-view_left, -view_bottom, 0));
-            
     }
     else {
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
-//        std::cout << -g_current_scene->get_state().player->get_position().y << std::endl;
     }
 
-    
     if (g_current_scene == g_levelA && g_current_scene->get_state().player->get_position().y < -10.0f) switch_to_scene(g_levelB);
     
-    g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
+//    g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
 }
 
 void render()
@@ -281,7 +264,7 @@ void render()
     // ————— RENDERING THE SCENE (i.e. map, character, enemies...) ————— //
     g_current_scene->render(&g_shader_program);
        
-    g_effects->render();
+//    g_effects->render();
     
     SDL_GL_SwapWindow(g_display_window);
 }
@@ -294,7 +277,7 @@ void shutdown()
     delete g_levelB;
     delete g_levelC;
     delete g_levelD;
-    delete g_effects;
+//    delete g_effects;
 }
 
 // ––––– DRIVER GAME LOOP ––––– //

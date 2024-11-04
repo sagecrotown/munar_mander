@@ -47,7 +47,7 @@ void LevelD::initialise(ShaderProgram *program) {
         { 1 , 1 , 1 , 1 }   // excess, too lazy to change array sizes
     };
 
-    glm::vec3 acceleration = glm::vec3(0.0f, -4.81f, 0.0f);
+    glm::vec3 acceleration = glm::vec3(0.0f, -3.73f, 0.0f);
     
     GLuint player_texture_id = Utility::load_texture(SPRITESHEET_FILEPATH);
     
@@ -55,23 +55,23 @@ void LevelD::initialise(ShaderProgram *program) {
         player_texture_id,         // texture id
         5.0f,                      // speed
         acceleration,              // acceleration
-        5.0f,                      // jumping power
+        15.0f,                      // jumping power
         player_walking_animation,  // animation index sets
         0.0f,                      // animation time
         4,                         // animation frame amount
         0,                         // current animation index
         1,                         // animation column amount
         3,                         // animation row amount
-        1.0f,                      // width
-        1.0f,                       // height
+        1.25f,                      // width
+        2.0f,                       // height
         PLAYER
     );
         
-    m_game_state.player->set_position(glm::vec3(2.0f, 0.0f, 0.0f));
+    m_game_state.player->set_position(glm::vec3(2.0f, 10.0f, 0.0f));
 
     // Jumping
-    m_game_state.player->set_jumping_power(3.0f);
-    m_game_state.player->set_scale(glm::vec3(5.0f, 5.0f, 1.0f));
+    m_game_state.player->set_jumping_power(5.0f);
+    m_game_state.player->set_scale(glm::vec3(2.0f, 2.0f, 1.0f));
     
     /**
     Enemies' stuff */
@@ -108,13 +108,24 @@ void LevelD::update(float delta_time)
 {
     m_game_state.player->update(delta_time, m_game_state.player, m_game_state.enemies, ENEMY_COUNT, m_game_state.map);
     
+    float view_left = std::max(m_game_state.player->get_position().x, 30.0f);
+    float view_bottom = std::max(m_game_state.player->get_position().y - 18, -115.0f);
+    
+    message_pos = glm::vec3(view_left + 20, view_bottom + 20, 0.0f);
+    fuel_pos = message_pos;
+    fuel_pos.x += 5;
+    
+    std::cout << m_game_state.player->get_position().y << std::endl;
+    std::cout << message_pos.y << std::endl;
+    
 //    if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
 }
 
 void LevelD::render(ShaderProgram *program)
 {
     m_game_state.map->render(program);
-//    Utility::draw_text(program, D_font_texture_id, "WELCOME TO MARS!", 0.5f, 0.01f, glm::vec3(1.0f, -1.0f , 0.0f));
+    Utility::draw_text(program, D_font_texture_id, "FUEL: ", 1.0f, 0.01f, message_pos);
+    Utility::draw_text(program, D_font_texture_id, std::to_string(fuel_count),  1.0f, 0.01f, fuel_pos);
     m_game_state.player->render(program);
     
 }

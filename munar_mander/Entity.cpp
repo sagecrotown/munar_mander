@@ -12,6 +12,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 #include "Entity.h"
+#include <cmath>
 
 void Entity::ai_activate(Entity *player)
 {
@@ -322,15 +323,21 @@ void Entity::update(float delta_time, Entity *player, Entity *collidable_entitie
         }
     }
     
-    m_velocity.x = m_movement.x * m_speed;
+//    m_velocity.x = m_movement.x * m_speed;
+//    m_velocity.y = m_movement.y * m_speed;
     m_velocity += m_acceleration * delta_time;
     
-    if (m_is_jumping)
-    {
+    if (m_is_jumping) {  // find acceleration components based on current angle of rotation
         m_is_jumping = false;
-        m_velocity.y += m_jumping_power;
+        
+//        m_velocity.y += m_jumping_power;
+        m_acceleration.x = std::sin(-m_angle) * m_jumping_power ;
+        m_acceleration.y = std::cos(-m_angle) * m_jumping_power ;
     }
     
+    m_velocity += m_acceleration * delta_time;
+    m_velocity.x -= m_velocity.x / 2 * delta_time; // drag resists movement
+
     m_position.y += m_velocity.y * delta_time;
     
     check_collision_y(collidable_entities, collidable_entity_count);
@@ -342,6 +349,8 @@ void Entity::update(float delta_time, Entity *player, Entity *collidable_entitie
     
     m_model_matrix = glm::mat4(1.0f);
     m_model_matrix = glm::translate(m_model_matrix, m_position);
+    m_model_matrix = glm::rotate(m_model_matrix, m_angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    m_model_matrix = glm::scale(m_model_matrix, m_scale);
 }
 
 
