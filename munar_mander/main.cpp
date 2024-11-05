@@ -73,6 +73,7 @@ SDL_Window* g_display_window;
 ShaderProgram g_shader_program;
 glm::mat4 g_view_matrix, g_projection_matrix;
 
+float delta_time;
 float g_previous_ticks = 0.0f;
 float g_accumulator = 0.0f;
 
@@ -190,7 +191,13 @@ void process_input()
                         }
                         
                         if (g_current_scene == g_levelC) {
-                            g_current_scene->fuel_count++;
+//                            std::cout << delta_time * 100000000 << std::endl;
+//                            std::cout << static_cast<int>(delta_time * 100000000) << std::endl;
+//                            
+                            if (static_cast<int>(delta_time * 100000000) % 5 == 0) {
+                                g_current_scene->fuel_count++;
+                            }
+//                            g_current_scene->fuel_count++;
                         }
                         break;
                         
@@ -230,8 +237,15 @@ void process_input()
     
     if (key_state[SDL_SCANCODE_SPACE]) {
         if (g_current_scene != g_levelE && g_current_scene != g_levelF) {
-            g_current_scene->get_state().player->jump();
-            g_current_scene->get_state().player->face_down();
+            if (g_current_scene == g_levelA || g_current_scene->fuel_count > 0) {
+                g_current_scene->get_state().player->jump();
+                g_current_scene->get_state().player->face_down();
+                if (g_current_scene == g_levelD) {
+                    if (static_cast<int>(delta_time * 100000000) % 10 == 0) {
+                        g_current_scene->fuel_count--;
+                    }
+                }
+            }
         }
     }
     else {
@@ -251,7 +265,7 @@ void process_input()
 void update()
 {
     float ticks = (float)SDL_GetTicks() / MILLISECONDS_IN_SECOND;
-    float delta_time = ticks - g_previous_ticks;
+    delta_time = ticks - g_previous_ticks;
     g_previous_ticks = ticks;
     
     delta_time += g_accumulator;
