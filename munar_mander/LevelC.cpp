@@ -1,17 +1,16 @@
 #include "LevelC.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 1
-#define LEVEL_HEIGHT 1
+#define LEVEL_WIDTH 60
+#define LEVEL_HEIGHT 45
 
 constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png";
+            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/red_font.png",
+            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/blank.csv";
 
-unsigned int LEVELC_DATA[] = {
-    0
-};
+unsigned int LEVELC_DATA[LEVEL_WIDTH * LEVEL_HEIGHT];
 
 LevelC::~LevelC()
 {
@@ -28,8 +27,9 @@ void LevelC::initialise(ShaderProgram *program)
     
     C_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
+    Utility::readCSV(CSV_FILEPATH, LEVELC_DATA, LEVEL_WIDTH * LEVEL_HEIGHT);
     GLuint map_texture_id = Utility::load_texture(MAP_FILEPATH);
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 7, 4);
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 7, 3);
     
     int player_walking_animation[4][4] = {
         { 0 , 0 , 0 , 0},   // dead
@@ -98,8 +98,8 @@ void LevelC::update(float delta_time) {
 void LevelC::render(ShaderProgram *program) {
     m_game_state.map->render(program);
     
-    Utility::draw_text(program, C_font_texture_id, "FUEL: ", 1.0f, 0.1f, glm::vec3(1.0f, -4.0f , 0.0f));
-    Utility::draw_text(program, C_font_texture_id, std::to_string(fuel_count), 1.0f, 0.1f, glm::vec3(7.0f, -4.0f , 0.0f));
+    Utility::draw_text(program, C_font_texture_id, "FUEL: ", 1.0f, 0.1f, glm::vec3(1.0f, -3.75f , 0.0f));
+    Utility::draw_text(program, C_font_texture_id, std::to_string(fuel_count), 1.0f, 0.1f, glm::vec3(6.9f, -3.75f , 0.0f));
     
     Utility::draw_text(program, C_font_texture_id, "PRESS ENTER TO START", 0.15f, 0.01f, glm::vec3(1.0f, -7.0f, 0.0f));
     

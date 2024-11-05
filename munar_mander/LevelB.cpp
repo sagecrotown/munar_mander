@@ -1,40 +1,18 @@
 #include "LevelB.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 20
-#define LEVEL_HEIGHT 20
+#define LEVEL_WIDTH 60
+#define LEVEL_HEIGHT 45
 
 constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/big_font.png";
+            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_font.png",
+            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/blank.csv";
 
-unsigned int LEVELB_DATA[] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+unsigned int LEVELB_DATA[LEVEL_WIDTH * LEVEL_HEIGHT];
 
-// "WELCOME! YOU ARE A GENETICALLY MODIFIED HUMAN (THOUGH WHO ISN'T THESE DAYS), BRED SPECIFICALLY TO HANDLE SPACE TRAVEL. YOU'VE BEEN TRAINING FOR THIS MISSION SINCE YOUR PARENTS SURRENDERED YOU TO RAYTHEONSPACEXDRPEPPER AT AGE SIX--AND YOU BARELY REMEMBER THEM, ANYWAY. YOU AND YOUR BEST FRIEND, A SMALL MARTIAN ROCK GIFTED TO YOU WHEN YOUR ROCKET-IMPLANT SURGERIES WERE COMPLETED, HAVE BEEN DREAMING OF THE DAY YOU COULD LAND ON A PLANED WITH A GRAVITATIONAL ACCELERATION OF 3.73 M/S^2. AND THAT DAY HAS FINALLY COME! LUCKILY, YOU BELONG TO A RELATIVELY BENEVOLENT PARENT COMPANY, AND YOU SHOULD HAVE PLENTY OF FUEL TO LAND SAFELY. PRESS F TO GET FUEL.";
-
-
-
-std::vector<std::string> MESSAGE = {"WELCOME! YOU ARE A GENETICALLY MODIFIED HUMAN (THOUGH ", "WHO ISN'T THESE DAYS), BRED SPECIFICALLY TO HANDLE ", "SPACE TRAVEL. YOU'VE BEEN TRAINING FOR THIS MISSION ", "EVER SINCE YOUR PARENTS SURRENDERED YOU TO ", "RAYTHEONSPACEXDRPEPPER AT AGE SIX--AND YOU BARELY ", "REMEMBER THEM, ANYWAY. YOU AND YOUR BEST FRIEND, A ", "SMALL MARTIAN ROCK GIFTED TO YOU WHEN YOUR ", "ROCKET-IMPLANT SURGERIES WERE COMPLETED, HAVE BEEN ", "DREAMING OF THE DAY YOU COULD LAND ON A PLANED WITH ", "A GRAVITATIONAL ACCELERATION OF 3.73 M/S^2. AND THAT ", "DAY HAS FINALLY COME! LUCKILY, YOU BELONG TO A ", "RELATIVELY BENEVOLENT PARENT COMPANY, AND YOU SHOULD ", "HAVE PLENTY OF FUEL TO LAND SAFELY. ", "", "PRESS F TO GET FUEL."};
+std::vector<std::string> MESSAGE = {"WELCOME! YOU ARE A GENETICALLY MODIFIED ", "HUMAN (THOUGH WHO ISN'T, THESE DAYS), ", "BRED SPECIFICALLY TO HANDLE SPACE TRAVEL. ", "YOU'VE BEEN TRAINING FOR THIS MISSION EVER ", "SINCE YOUR PARENTS SURRENDERED YOU TO ", "RAYTHEONSPACEXDRPEPPER AT AGE SIX--AND YOU ", "BARELY REMEMBER THEM, ANYWAY. YOU AND YOUR ", "BEST FRIEND, A SMALL MARTIAN ROCK GIFTED ", "TO YOU WHEN YOUR ROCKET-IMPLANT SURGERIES ", "WERE COMPLETED, HAVE BEEN DREAMING OF THE ", "DAY YOU COULD LAND ON A PLANET WITH A ", "GRAVITATIONAL ACCELERATION OF 3.73 M/S^2. ", "AND THAT DAY HAS FINALLY COME! LUCKILY, ", "YOU BELONG TO A RELATIVELY BENEVOLENT ", "PARENT COMPANY, AND YOU SHOULD HAVE PLENTY ", "OF FUEL TO LAND SAFELY. ", "", "PRESS F TO GET FUEL."};
 
                      
 
@@ -53,8 +31,9 @@ void LevelB::initialise(ShaderProgram *program)
     
     B_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
+    Utility::readCSV(CSV_FILEPATH, LEVELB_DATA, LEVEL_WIDTH * LEVEL_HEIGHT);
     GLuint map_texture_id = Utility::load_texture(MAP_FILEPATH);
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f, 7, 4);
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f, 7, 3);
     
     int player_walking_animation[4][4] = {
         { 0 , 0 , 0 , 0},   // dead
@@ -112,8 +91,7 @@ void LevelB::initialise(ShaderProgram *program)
     Mix_VolumeMusic(0.0f);
     
     m_game_state.jump_sfx = Mix_LoadWAV("assets/bounce.wav");
-    
-    // Font stuff:
+
 }
 
 void LevelB::update(float delta_time) {
@@ -123,8 +101,7 @@ void LevelB::update(float delta_time) {
 void LevelB::render(ShaderProgram *program) {
     m_game_state.map->render(program);
     
-    for (int i = 0; i < 15; i++) {
-        Utility::draw_text(program, B_font_texture_id, MESSAGE[i], 0.15f, 0.01f, glm::vec3(1.0f, -0.5f - (i * 0.45f), 0.0f));
+    for (int i = 0; i < MESSAGE.size(); i++) {
+        Utility::draw_text(program, B_font_texture_id, MESSAGE[i], 0.2f, 0.01f, glm::vec3(0.75f, -0.75f - (i * 0.35f), 0.0f));
     }
-    
 }
