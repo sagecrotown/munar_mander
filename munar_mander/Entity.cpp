@@ -254,18 +254,27 @@ void const Entity::check_collision_y(Map *map)
         m_position.y += penetration_y;
         m_velocity.y = 0;
         m_collided_bottom = true;
+        if (map->is_triangle(bottom)) {
+            m_on_triangle = true;
+        }
     }
     else if (map->is_solid(bottom_left, &penetration_x, &penetration_y) && m_velocity.y < 0)
     {
             m_position.y += penetration_y;
             m_velocity.y = 0;
             m_collided_bottom = true;
+            if (map->is_triangle(bottom_left)) {
+                m_on_triangle = true;
+            }
     }
     else if (map->is_solid(bottom_right, &penetration_x, &penetration_y) && m_velocity.y < 0)
     {
         m_position.y += penetration_y;
         m_velocity.y = 0;
         m_collided_bottom = true;
+        if (map->is_triangle(bottom_right)) {
+            m_on_triangle = true;
+        }
         
     }
 }
@@ -300,6 +309,7 @@ void Entity::update(float delta_time, Entity *player, Entity *collidable_entitie
     m_collided_bottom = false;
     m_collided_left   = false;
     m_collided_right  = false;
+    m_on_triangle = false;
     
     if (m_entity_type == ENEMY) ai_activate(player);
     

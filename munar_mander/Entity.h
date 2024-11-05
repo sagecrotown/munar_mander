@@ -56,6 +56,7 @@ private:
     bool m_collided_bottom = false;
     bool m_collided_left   = false;
     bool m_collided_right  = false;
+    bool m_on_triangle = false;
 
 public:
     // ————— STATIC VARIABLES ————— //
@@ -117,6 +118,7 @@ public:
     bool      const get_collided_bottom() const { return m_collided_bottom; }
     bool      const get_collided_right() const { return m_collided_right; }
     bool      const get_collided_left() const { return m_collided_left; }
+    bool      const get_on_triangle() const { return m_on_triangle; }
     
     void activate()   { m_is_active = true;  };
     void deactivate() { m_is_active = false; };

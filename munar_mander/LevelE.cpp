@@ -1,19 +1,20 @@
-#include "LevelC.h"
+#include "LevelE.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 1
-#define LEVEL_HEIGHT 1
+#define LEVEL_WIDTH 60
+#define LEVEL_HEIGHT 45
 
-constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
+constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprites.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png";
+            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/big_font.png",
+            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/final_map.csv";
 
-unsigned int LEVELC_DATA[] = {
-    0
-};
+unsigned int LEVELE_DATA[LEVEL_WIDTH * LEVEL_HEIGHT];
 
-LevelC::~LevelC()
+static std::vector<std::string> MESSAGE = {"RAYTHEONSPACEXDRPEPPER NEVER COMES BACK FOR YOUR BODY, ", "THOUGH THEY DO PLAY A SLIDESHOW OF YOUR 'BEST MOMENTS' ", "AND GIVE EVERYONE ICE CREAM BACK AT THE DORMS. YOUR ", "ROCK IS NOT RECOVERED EITHER, BUT WHEN THE NEXT KID ", "RECOVERING FROM THE IMPLANTS IS GIVEN A NEW ONE, THEY ", "ARE TOLD IT ONCE BELONGED TO YOU. YOU DO NOT DIE ", "HAPPY, MOSTLY BECAUSE YOU DIED TOO QUICKLY TO REALIZE ", "IT WAS HAPPENING AT ALL."};
+
+LevelE::~LevelE()
 {
     delete [] m_game_state.enemies;
     delete    m_game_state.player;
@@ -22,14 +23,15 @@ LevelC::~LevelC()
     Mix_FreeMusic(m_game_state.bgm);
 }
 
-void LevelC::initialise(ShaderProgram *program)
+void LevelE::initialise(ShaderProgram *program)
 {
     m_game_state.next_scene_id = -1;
     
-    C_font_texture_id = Utility::load_texture(FONT_FILEPATH);
+    E_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
+    Utility::readCSV(CSV_FILEPATH, LEVELE_DATA, LEVEL_WIDTH * LEVEL_HEIGHT);
     GLuint map_texture_id = Utility::load_texture(MAP_FILEPATH);
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 7, 4);
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELE_DATA, map_texture_id, 1.0f, 7, 3);
     
     int player_walking_animation[4][4] = {
         { 0 , 0 , 0 , 0},   // dead
@@ -52,14 +54,15 @@ void LevelC::initialise(ShaderProgram *program)
         4,                         // animation frame amount
         0,                         // current animation index
         1,                         // animation column amount
-        3,                         // animation row amount
+        4,                         // animation row amount
         1.0f,                      // width
         1.0f,                       // height
         PLAYER
     );
         
-    m_game_state.player->set_position(glm::vec3(5.0f, -5.0f, 0.0f));
-    m_game_state.player->deactivate();
+    m_game_state.player->set_position(glm::vec3(30.0f, -40.0f, 0.0f));
+    m_game_state.player->set_scale(glm::vec3(20.0f, 20.0f, 1.0f));
+    m_game_state.player->face_left();
     
     /**
     Enemies' stuff */
@@ -91,17 +94,16 @@ void LevelC::initialise(ShaderProgram *program)
     // Font stuff:
 }
 
-void LevelC::update(float delta_time) {
+void LevelE::update(float delta_time) {
     m_game_state.player->update(delta_time, m_game_state.player, m_game_state.enemies, ENEMY_COUNT, m_game_state.map);
 }
 
-void LevelC::render(ShaderProgram *program) {
+void LevelE::render(ShaderProgram *program) {
     m_game_state.map->render(program);
-    
-    Utility::draw_text(program, C_font_texture_id, "FUEL: ", 1.0f, 0.1f, glm::vec3(1.0f, -4.0f , 0.0f));
-    Utility::draw_text(program, C_font_texture_id, std::to_string(fuel_count), 1.0f, 0.1f, glm::vec3(7.0f, -4.0f , 0.0f));
-    
-    Utility::draw_text(program, C_font_texture_id, "PRESS ENTER TO START", 0.15f, 0.01f, glm::vec3(1.0f, -7.0f, 0.0f));
+    Utility::draw_text(program, E_font_texture_id, "YOU LOSE!", 2.0f, 0.01f, glm::vec3(20.0f, -6.0f, 0.0f));
+    for (int i = 0; i < MESSAGE.size(); i++) {
+        Utility::draw_text(program, E_font_texture_id, MESSAGE[i], 1.0f, 0.01f, glm::vec3(3.0f, -10.5f - (i * 2.0f), 0.0f));
+    }
+    m_game_state.player->render(program);
     
 }
-

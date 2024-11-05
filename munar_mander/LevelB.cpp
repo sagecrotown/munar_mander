@@ -7,7 +7,7 @@
 constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png";
+            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/big_font.png";
 
 unsigned int LEVELB_DATA[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -57,10 +57,10 @@ void LevelB::initialise(ShaderProgram *program)
     m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f, 7, 4);
     
     int player_walking_animation[4][4] = {
-        { 1 , 1 , 1 , 1},   // dead
-        { 2 , 2 , 2 , 2},   // landed safely
-        { 3 , 3 , 3 , 3},   // playing
-        { 1 , 1 , 1 , 1 }   // excess, too lazy to change array sizes
+        { 0 , 0 , 0 , 0},   // dead
+        { 1 , 1 , 1 , 1},   // landed safely
+        { 2 , 2 , 2 , 2},   // playing
+        { 3 , 3 , 3 , 3},   // blasting
     };
 
     glm::vec3 acceleration = glm::vec3(0.0f, -4.81f, 0.0f);

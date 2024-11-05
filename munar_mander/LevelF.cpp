@@ -1,19 +1,20 @@
-#include "LevelC.h"
+#include "LevelF.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 1
-#define LEVEL_HEIGHT 1
+#define LEVEL_WIDTH 60
+#define LEVEL_HEIGHT 45
 
-constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
+constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprites.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png";
+            FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/big_font.png",
+            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/winner.csv";
 
-unsigned int LEVELC_DATA[] = {
-    0
-};
+unsigned int LEVELF_DATA[LEVEL_WIDTH * LEVEL_HEIGHT];
 
-LevelC::~LevelC()
+static std::vector<std::string> MESSAGE = {"AFTER RETURNING TO YOUR DORM, RAYTHEONSPACEXDRPEPPER ", "CONGRATULATES YOU WITH A SLIDESHOW OF YOUR 'BEST MOMENTS' ", "AND GIVES EVERYONE ICE CREAM AND HALF A DAY OFF. YOU ARE ", "TOLD YOU HAVE A WHOLE WEEK TO YOURSELF BEFORE YOUR NEXT ", "MISSION, THOUGH YOU'RE NOT QUITE SURE WHAT TO DO WITH ", "THE TIME. AFTER COMPLETING YOUR ACTUAL MISSION, YOU WERE ", "INSTRUCTED TO GATHER SEVERAL MORE MARTIAN ROCKS, WHICH ", "YOU WILL DISTRIBUTE TO THE OTHER KIDS WHO ARE RECOVERING ", "FROM THEIR IMPLANTS. YOU TELL THEM IT'S NOT SO BAD, AND ", "YOU TRULY BELIEVE IT. YOU ARE HAPPY, YOU THINK. AFTER ", "ALL, ISN'T THIS WHAT LIFE IS ALL ABOUT?"};
+
+LevelF::~LevelF()
 {
     delete [] m_game_state.enemies;
     delete    m_game_state.player;
@@ -22,14 +23,15 @@ LevelC::~LevelC()
     Mix_FreeMusic(m_game_state.bgm);
 }
 
-void LevelC::initialise(ShaderProgram *program)
+void LevelF::initialise(ShaderProgram *program)
 {
     m_game_state.next_scene_id = -1;
     
-    C_font_texture_id = Utility::load_texture(FONT_FILEPATH);
+    F_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
+    Utility::readCSV(CSV_FILEPATH, LEVELF_DATA, LEVEL_WIDTH * LEVEL_HEIGHT);
     GLuint map_texture_id = Utility::load_texture(MAP_FILEPATH);
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 7, 4);
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELF_DATA, map_texture_id, 1.0f, 7, 3);
     
     int player_walking_animation[4][4] = {
         { 0 , 0 , 0 , 0},   // dead
@@ -52,14 +54,15 @@ void LevelC::initialise(ShaderProgram *program)
         4,                         // animation frame amount
         0,                         // current animation index
         1,                         // animation column amount
-        3,                         // animation row amount
+        4,                         // animation row amount
         1.0f,                      // width
         1.0f,                       // height
         PLAYER
     );
         
-    m_game_state.player->set_position(glm::vec3(5.0f, -5.0f, 0.0f));
-    m_game_state.player->deactivate();
+    m_game_state.player->set_position(glm::vec3(30.0f, -40.0f, 0.0f));
+    m_game_state.player->set_scale(glm::vec3(20.0f, 20.0f, 1.0f));
+    m_game_state.player->face_right();
     
     /**
     Enemies' stuff */
@@ -91,17 +94,16 @@ void LevelC::initialise(ShaderProgram *program)
     // Font stuff:
 }
 
-void LevelC::update(float delta_time) {
+void LevelF::update(float delta_time) {
     m_game_state.player->update(delta_time, m_game_state.player, m_game_state.enemies, ENEMY_COUNT, m_game_state.map);
 }
 
-void LevelC::render(ShaderProgram *program) {
+void LevelF::render(ShaderProgram *program) {
     m_game_state.map->render(program);
-    
-    Utility::draw_text(program, C_font_texture_id, "FUEL: ", 1.0f, 0.1f, glm::vec3(1.0f, -4.0f , 0.0f));
-    Utility::draw_text(program, C_font_texture_id, std::to_string(fuel_count), 1.0f, 0.1f, glm::vec3(7.0f, -4.0f , 0.0f));
-    
-    Utility::draw_text(program, C_font_texture_id, "PRESS ENTER TO START", 0.15f, 0.01f, glm::vec3(1.0f, -7.0f, 0.0f));
+    Utility::draw_text(program, F_font_texture_id, "YOU WIN!", 2.0f, 0.01f, glm::vec3(20.0f, -3.5f, 0.0f));
+    for (int i = 0; i < MESSAGE.size(); i++) {
+        Utility::draw_text(program, F_font_texture_id, MESSAGE[i], 0.95f, 0.01f, glm::vec3(3.0f, -7.0f - (i * 2.0f), 0.0f));
+    }
+    m_game_state.player->render(program);
     
 }
-

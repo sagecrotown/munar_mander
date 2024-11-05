@@ -112,3 +112,17 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
     
     return true;
 }
+
+bool Map::is_triangle(glm::vec3 position) {
+    
+    int tile_x = floor((position.x + (m_tile_size / 2))  / m_tile_size);
+    int tile_y = -(ceil(position.y - (m_tile_size / 2))) / m_tile_size; // Our array counts up as Y goes down.
+    
+    // If the tile index is 0 i.e. an open space, it is not solid
+    int tile = m_level_data[tile_y * m_width + tile_x];
+    if (tile == 1 || tile == 2 || tile == 8 || tile == 9 || tile == 15 || tile == 16) {
+        return true;
+    }
+    return false;
+}
+

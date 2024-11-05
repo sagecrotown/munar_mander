@@ -1,14 +1,14 @@
 #include "LevelD.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 200
+#define LEVEL_WIDTH 500
 #define LEVEL_HEIGHT 140
 
-constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
+constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprites.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
           FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png",
-            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map_big.csv";
+            CSV_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map_bigger.csv";
 
 unsigned int LEVELD_DATA[LEVEL_WIDTH * LEVEL_HEIGHT];
 
@@ -39,12 +39,12 @@ void LevelD::initialise(ShaderProgram *program) {
     
     D_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
-    // Existing
-    int player_walking_animation[4][4] = {
-        { 1 , 1 , 1 , 1},   // dead
-        { 2 , 2 , 2 , 2},   // landed safely
-        { 3 , 3 , 3 , 3},   // playing
-        { 1 , 1 , 1 , 1 }   // excess, too lazy to change array sizes
+    // excess, too lazy to change array size
+    int player_animation[4][4] = {
+        { 0 , 0 , 0 , 0},   // dead
+        { 1 , 1 , 1 , 1},   // landed safely
+        { 2 , 2 , 2 , 2},   // playing
+        { 3 , 3 , 3 , 3},   // blasting
     };
 
     glm::vec3 acceleration = glm::vec3(0.0f, -3.73f, 0.0f);
@@ -56,14 +56,14 @@ void LevelD::initialise(ShaderProgram *program) {
         5.0f,                      // speed
         acceleration,              // acceleration
         15.0f,                      // jumping power
-        player_walking_animation,  // animation index sets
+        player_animation,  // animation index sets
         0.0f,                      // animation time
         4,                         // animation frame amount
         0,                         // current animation index
         1,                         // animation column amount
-        3,                         // animation row amount
-        1.25f,                      // width
-        2.0f,                       // height
+        4,                         // animation row amount
+        0.6f,                      // width
+        0.8f,                       // height
         PLAYER
     );
         
@@ -115,10 +115,19 @@ void LevelD::update(float delta_time)
     fuel_pos = message_pos;
     fuel_pos.x += 5;
     
-    std::cout << m_game_state.player->get_position().y << std::endl;
-    std::cout << message_pos.y << std::endl;
-    
 //    if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
+    if (m_game_state.player->get_collided_left() || m_game_state.player->get_collided_right()) {
+        std::cout << "loser! " << std::endl;
+        m_game_state.next_scene_id = 4;     // LOSER
+    }
+    else if (m_game_state.player->get_collided_bottom() && m_game_state.player->get_on_triangle()) {
+        std::cout << "loser! (triangle) " << std::endl;
+        m_game_state.next_scene_id = 4;     // LOSER
+    }
+    else if (m_game_state.player->get_collided_bottom()) {
+        std::cout << "winner! " << std::endl;
+        m_game_state.next_scene_id = 5;     // WINNER
+    }
 }
 
 void LevelD::render(ShaderProgram *program)

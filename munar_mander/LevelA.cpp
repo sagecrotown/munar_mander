@@ -4,10 +4,10 @@
 #define LEVEL_WIDTH 10
 #define LEVEL_HEIGHT 8
 
-constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprite_sheet.png",
+constexpr char SPRITESHEET_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/sprites.png",
            ENEMY_FILEPATH[]       = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/soph.png",
             MAP_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/mars_map.png",
-          FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/font.png";
+          FONT_FILEPATH[] = "/Users/Sage/Downloads/Game Programming/munar_mander/munar_mander/assets/big_font.png";
 
 //unsigned int LEVELA_DATA[] = {
 //    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
@@ -57,11 +57,11 @@ void LevelA::initialise(ShaderProgram *program)
     A_font_texture_id = Utility::load_texture(FONT_FILEPATH);
     
     // Existing
-    int player_walking_animation[4][4] = {
-        { 1 , 1 , 1 , 1},   // dead
-        { 2 , 2 , 2 , 2},   // landed safely
-        { 3 , 3 , 3 , 3},   // playing
-        { 1 , 1 , 1 , 1 }   // excess, too lazy to change array sizes
+    int player_animation[4][4] = {
+        { 0 , 0 , 0 , 0},   // dead
+        { 1 , 1 , 1 , 1},   // landed safely
+        { 2 , 2 , 2 , 2},   // playing
+        { 3 , 3 , 3 , 3},   // blasting
     };
 
     glm::vec3 acceleration = glm::vec3(0.0f, -4.81f, 0.0f);
@@ -73,14 +73,14 @@ void LevelA::initialise(ShaderProgram *program)
         5.0f,                      // speed
         acceleration,              // acceleration
         5.0f,                      // jumping power
-        player_walking_animation,  // animation index sets
+        player_animation,  // animation index sets
         0.0f,                      // animation time
         4,                         // animation frame amount
         0,                         // current animation index
         1,                         // animation column amount
-        3,                         // animation row amount
-        1.0f,                      // width
-        1.0f,                       // height
+        4,                         // animation row amount
+        0.3f,                      // width
+        0.4f,                       // height
         PLAYER
     );
         
